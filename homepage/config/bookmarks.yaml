@@ -1,0 +1,23 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/latest/configs/bookmarks
+
+- Developer:
+    - Github:
+        - icon: si-github
+          href: https://github.com/
+
+- Social:
+    - Reddit:
+        - icon: si-reddit
+          href: https://reddit.com/
+
+- Entertainment:
+    - YouTube:
+        - icon: si-youtube
+          href: https://youtube.com/
+
+- Gaming:
+    - GG.Deals:
+      - icon: https://gg.deals/images/logo/symbol-white.svg?v=a0b48824
+        href: https://gg.deals/

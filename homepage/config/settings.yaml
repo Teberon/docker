@@ -1,0 +1,26 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/latest/configs/settings
+
+headerStyle: boxed
+theme: dark
+providers:
+  openweathermap: {{HOMEPAGE_VAR_OPENWEATHER_API}}
+disableCollapse: true
+useEqualHeights: true
+target: _blank
+hideVersion: true
+hideErrors: true
+layout:
+  Network:
+    style: row
+    columns: 2
+  Server:
+    style: row
+    columns: 4
+quicklaunch:
+  searchDescriptions: true
+  hideInternetSearch: true
+  showSearchSuggestions: true
+  hideVisitURL: true
+showStats: true
