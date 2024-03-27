@@ -7,6 +7,9 @@
 *.sqlite-shm
 *.sqlite-wal
 
+## Backups
+*.bck
+
 ## Freqtrade
 freqtrade/user_data/backtest_results/*
 freqtrade/user_data/data/*
