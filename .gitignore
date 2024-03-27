@@ -1,0 +1,54 @@
+## Environment Files
+.env
+*_private.json
+
+## SQL
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+## Freqtrade
+freqtrade/user_data/backtest_results/*
+freqtrade/user_data/data/*
+freqtrade/user_data/freqaimodels/*
+freqtrade/user_data/hyperopts/*
+freqtrade/user_data/logs/*
+freqtrade/user_data/models/*
+freqtrade/user_data/notebooks/*
+freqtrade/user_data/strategies/*
+freqtrade-plot.html
+freqtrade-profit-plot.html
+freqtrade/rpc/api_server/ui/*
+build_helpers/ta-lib/*
+
+## arr
+*/bazarr/*
+*/sonarr/*
+*/radarr/*
+*/prowlarr/*
+*/flaresolverr/*
+*/readarr/*
+*/plex/*
+*/tautulli/*
+*/calibre-web/*
+*/deluge/*
+*/calibre/*
+*/overseerr/*
+*/sabnzbd/*
+
+## rotki
+rotki/*
+
+## Traefik
+traefik/*
+
+## Homepage
+homepage/config/*
+
+## Macos related
+.DS_Store
+
+## Allow Sample
+!*.sample*
+!sample_*
+!*example*

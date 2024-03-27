@@ -1,0 +1,247 @@
+version: "3.8"
+networks:
+  arr_default: {}
+  proxy: {}
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    network_mode: host
+    depends_on:
+      - flaresolverr
+    environment:
+      - PUID=$PLEX_UID
+      - PGID=$PGID
+      - VERSION=docker
+      - TZ=$TZ
+    volumes:
+      - ./plex:/config
+      - /mnt/arr/media:/media
+    restart: unless-stopped
+  radarr:
+    container_name: radarr
+    image: lscr.io/linuxserver/radarr:latest
+    restart: unless-stopped
+    depends_on:
+      - flaresolverr
+    logging:
+      driver: json-file
+    ports:
+      - ${RADARRPORT:-7878}:7878
+    environment:
+      - PUID=$RADARR_UID
+      - PGID=$PGID
+      - TZ=$TZ
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./radarr:/config
+      - /mnt/arr:/data
+    networks:
+      - arr_default
+  sonarr:
+    container_name: sonarr
+    image: lscr.io/linuxserver/sonarr:latest
+    restart: unless-stopped
+    depends_on:
+      - flaresolverr
+    logging:
+      driver: json-file
+    ports:
+      - ${SONARRPORT:-8989}:8989
+    environment:
+      - PUID=$SONARR_UID
+      - PGID=$PGID
+      - TZ=$TZ
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./sonarr:/config
+      - /mnt/arr:/data
+    networks:
+      - arr_default
+  bazarr:
+    container_name: bazarr
+    image: lscr.io/linuxserver/bazarr:latest
+    restart: unless-stopped
+    depends_on:
+      - flaresolverr
+    logging:
+      driver: json-file
+    ports:
+      - ${BAZARRPORT:-6767}:6767
+    environment:
+      - PUID=$BAZARR_UID
+      - PGID=$PGID
+      - TZ=$TZ
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./bazarr:/config
+      - /mnt/arr/media:/data/media
+    networks:
+      - arr_default
+  readarr:
+    image: lscr.io/linuxserver/readarr:develop
+    container_name: readarr
+    depends_on:
+      - flaresolverr
+    environment:
+      - PUID=$READARR_UID
+      - PGID=$PGID
+      - TZ=$TZ
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./readarr:/config
+      - /mnt/arr:/data
+    ports:
+      - ${READARRPORT:-8787}:8787
+    restart: unless-stopped
+    networks:
+      - arr_default
+  prowlarr:
+    container_name: prowlarr
+    image: lscr.io/linuxserver/prowlarr:latest
+    restart: unless-stopped
+    depends_on:
+      - flaresolverr
+    logging:
+      driver: json-file
+    ports:
+      - ${PROWLARRPORT:-9696}:9696
+    environment:
+      - PUID=$PROWLARR_UID
+      - PGID=$PGID
+      - TZ=$TZ
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./prowlarr:/config
+    networks:
+      - arr_default
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    environment:
+      - AUDIOBOOKSHELF_UID=$AUDIOBOOKSHELF_UID
+      - AUDIOBOOKSHELF_GID=$PGID
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./audiobookshelf:/config
+      - /mnt/arr/media/audiobooks:/audiobooks
+      - /mnt/arr/media/podcasts:/podcasts
+      - /mnt/arr/media/metadata:/metadata
+    ports:
+      - ${AUDIOBOOKSHELFPORT:-13378}:80
+    restart: unless-stopped
+    networks:
+      - arr_default
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=info
+      - LOG_HTML=false
+      - CAPTCHA_SOLVER=none
+      - TZ=$TZ
+    ports:
+      - ${FLARESOLVERRPORT:-8191}:8191
+    networks:
+      - arr_default
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    depends_on:
+      - flaresolverr
+      - plex
+    environment:
+      - PUID=$TAUTULLI_UID
+      - PGID=$PGID
+      - TZ=$TZ
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./tautulli:/config
+    ports:
+      - ${TAUTULLIPORT:-8181}:8181
+    restart: unless-stopped
+    networks:
+      - arr_default
+  deluge:
+    image: lscr.io/linuxserver/deluge:latest
+    container_name: deluge
+    depends_on:
+      - flaresolverr
+    environment:
+      - PUID=$DELUGE_UID
+      - PGID=$PGID
+      - TZ=$TZ
+      - DELUGE_LOGLEVEL=error #optional
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./deluge:/config
+      - /mnt/arr/torrents:/data/torrents
+    ports:
+      - ${DELUGEPORT:-8112}:8112
+      - 6881:6881
+      - 6881:6881/udp
+      - 58846:58846 #optional
+    restart: unless-stopped
+    networks:
+      - arr_default
+  calibre-web:
+    image: lscr.io/linuxserver/calibre-web:latest
+    container_name: calibre-web
+    depends_on:
+      - flaresolverr
+    environment:
+      - PUID=$CALIBRE_UID
+      - PGID=$PGID
+      - TZ=$TZ
+      - DOCKER_MODS=linuxserver/mods:universal-calibre #optional
+      - OAUTHLIB_RELAX_TOKEN_SCOPE=1 #optional
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./calibre:/config
+      - /mnt/arr/books:/books
+    ports:
+      - ${CALIBREPORT:-8083}:8083
+    restart: unless-stopped
+    networks:
+      - arr_default
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    depends_on:
+      - flaresolverr
+    environment:
+      - PUID=$OVERSEERR_UID
+      - PGID=$PGID
+      - TZ=$TZ
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./overseerr:/app/config
+    ports:
+      - ${OVERSEERRPORT:-5055}:5055
+    restart: unless-stopped
+    networks:
+      - arr_default
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.https.rule=Host(`overseerr.teberon.eu`)
+      - traefik.http.routers.https.entrypoints=https
+      - traefik.http.routers.https.service=overseerr
+      - traefik.http.services.loadbalancer.server.scheme=https
+      - traefik.http.services.loadbalancer.server.port=5055
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    environment:
+      - PUID=$SABNZBD_UID
+      - PGID=$PGID
+      - TZ=$TZ
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./sabnzbd:/config
+      - /mnt/arr/usenet:/data/usenet #optional
+    ports:
+      - ${SABNZBDPORT:-8080}:8080
+    restart: unless-stopped
+    networks:
+      - arr_default
