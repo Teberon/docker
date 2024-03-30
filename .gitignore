@@ -19,6 +19,7 @@ freqtrade/user_data/logs/*
 freqtrade/user_data/models/*
 freqtrade/user_data/notebooks/*
 freqtrade/user_data/strategies/*
+freqtrade/user_data/config.*.json
 freqtrade-plot.html
 freqtrade-profit-plot.html
 freqtrade/rpc/api_server/ui/*
